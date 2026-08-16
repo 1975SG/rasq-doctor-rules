@@ -1,7 +1,7 @@
 package iderm:plugin@0.4.0;
 
 /// Shared types passed across the host/plugin boundary.
-/// Kept intentionally minimal — plugins get read access to project
+/// Kept intentionally minimal - plugins get read access to project
 /// state, never direct filesystem or process access. All filesystem
 /// interaction goes through the `host` import so the runtime can
 /// sandbox it.
@@ -33,7 +33,7 @@ interface types {
     }
 }
 
-/// Host-provided capabilities. Every plugin import goes through here —
+/// Host-provided capabilities. Every plugin import goes through here -
 /// no ambient filesystem or process access. This is what makes the
 /// WASM sandbox meaningful rather than nominal.
 interface host {
@@ -45,7 +45,7 @@ interface host {
 }
 
 /// Implemented by doctor-rule plugins. `check` is pure: given project
-/// state, return findings. No side effects, no writes — that's what
+/// state, return findings. No side effects, no writes - that's what
 /// keeps `doctor` safe to run automatically on every `iderm .`.
 interface doctor-rule {
     use types.{project-info, finding};
@@ -54,7 +54,7 @@ interface doctor-rule {
     check: func(project: project-info) -> list<finding>;
 }
 
-/// Implemented by repair-recipe plugins. `propose` is also pure — it
+/// Implemented by repair-recipe plugins. `propose` is also pure - it
 /// returns a diff, never writes directly. Core applies the diff only
 /// after the existing [Y] confirm gate. This keeps repair-recipe
 /// plugins to the same trust boundary as built-in repair.
@@ -77,15 +77,15 @@ world repair-plugin {
 }
 
 /// Shared rendering primitives for `view-provider` plugins (ADR-009,
-/// shape designed in ADR-014/ADR-015 — see docs/modules/Idermviz.md for
+/// shape designed in ADR-014/ADR-015 - see docs/modules/Idermviz.md for
 /// the full rationale behind each shape below). A plugin composes these,
-/// Core only ever draws them — never raw ANSI from a plugin.
+/// Core only ever draws them - never raw ANSI from a plugin.
 interface view {
     use types.{severity};
 
     // --- Box-drawing diagrams: state graphs, decision flow (ADR-014 #1) ---
 
-    /// Small, fixed shape vocabulary — not general arbitrary-angle
+    /// Small, fixed shape vocabulary - not general arbitrary-angle
     /// geometry.
     enum node-shape {
         rectangle,
@@ -94,7 +94,7 @@ interface view {
     }
 
     /// Explicit position/size in heatmap-grid units (the same width/
-    /// height space as `heatmap-view`'s own fields) — used only by
+    /// height space as `heatmap-view`'s own fields) - used only by
     /// `composed-view`'s overlay nodes, which need real spatial
     /// registration against specific heatmap cells (ADR-015's PCB-
     /// outline-over-EMC-field example). `state-graph-view` nodes leave
@@ -111,7 +111,7 @@ interface view {
         id: string,
         label: string,
         shape: node-shape,
-        /// Reuses the shared `severity` type — one status vocabulary
+        /// Reuses the shared `severity` type - one status vocabulary
         /// project-wide, not a parallel one invented here.
         status: option<severity>,
         /// `none` for `state-graph-view` nodes; `some` for
@@ -126,7 +126,7 @@ interface view {
         from-id: string,
         to-id: string,
         /// Embedded directly in the rendered line (e.g. a "Yes" label on
-        /// a decision-branch edge) — the layout pass reserves space for
+        /// a decision-branch edge) - the layout pass reserves space for
         /// this, not just for node boxes.
         label: option<string>,
         highlighted: bool,
@@ -134,7 +134,7 @@ interface view {
 
     /// Full reachable-state space. Needs a real layered/hierarchical
     /// layout pass at render time (rank by BFS depth from
-    /// `initial-node-id`, minimize inter-rank crossings) — the WIT shape
+    /// `initial-node-id`, minimize inter-rank crossings) - the WIT shape
     /// only carries the graph data, not a layout.
     record state-graph-view {
         nodes: list<diagram-node>,
@@ -144,7 +144,7 @@ interface view {
 
     /// A single violating path (e.g. a model-checker counterexample).
     /// Deliberately a separate, much simpler view from
-    /// `state-graph-view` — a plain linear list needs no graph layout at
+    /// `state-graph-view` - a plain linear list needs no graph layout at
     /// all, same as the TLA+ Toolbox's own error-trace view.
     record trace-step {
         state-label: string,
@@ -162,7 +162,7 @@ interface view {
         log,
     }
 
-    /// Distinct color/style per role, not per series name — an engineer
+    /// Distinct color/style per role, not per series name - an engineer
     /// shouldn't have to relearn the color language per plugin.
     enum series-role {
         measured,
@@ -183,7 +183,7 @@ interface view {
     }
 
     /// A violation rendered directly on the curve, not only in a
-    /// separate table — reuses `severity` the same way `diagram-node`
+    /// separate table - reuses `severity` the same way `diagram-node`
     /// does.
     record chart-marker {
         x: f64,
@@ -191,21 +191,21 @@ interface view {
         status: severity,
     }
 
-    /// Exact X/Y value on demand — the "verifying" reading mode,
+    /// Exact X/Y value on demand - the "verifying" reading mode,
     /// separate from the color-coded curve's "glancing" mode.
     record cursor-position {
         x: f64,
         y: f64,
     }
 
-    /// A statistical interval, not a rendering-fidelity feature — a
+    /// A statistical interval, not a rendering-fidelity feature - a
     /// confidence band, a P10/P90 range around a P50 series, a fit's
     /// error band (ADR-017). `upper`/`lower` must be the same length,
     /// index-aligned to the same X position (same convention `series`'
     /// own point lists already assume for `windows(2)` drawing) so the
     /// renderer can connect them without guessing a correspondence.
     /// `status` reuses `severity` for a pass/fail-shaded band the same
-    /// way `chart-marker`/`diagram-node` already do — `none` for a band
+    /// way `chart-marker`/`diagram-node` already do - `none` for a band
     /// with no pass/fail meaning (e.g. a plain statistical interval).
     record band {
         upper: list<chart-point>,
@@ -220,7 +220,7 @@ interface view {
         y-scale: axis-scale,
         markers: list<chart-marker>,
         cursor: option<cursor-position>,
-        /// Plain list, not `option<list<band>>` — matches `series`/
+        /// Plain list, not `option<list<band>>` - matches `series`/
         /// `markers` on this same record, where an empty list already
         /// means "none", not a second layer of optionality (ADR-017).
         bands: list<band>,
@@ -230,7 +230,7 @@ interface view {
 
     /// Perceptually-uniform is the default; `rainbow` is kept as an
     /// explicit, named, non-default alternative for domain-familiarity
-    /// cases (e.g. CST/HFSS-style conventions) — never a silent default.
+    /// cases (e.g. CST/HFSS-style conventions) - never a silent default.
     enum colormap {
         perceptually-uniform,
         rainbow,
@@ -245,14 +245,14 @@ interface view {
     }
 
     /// How a heatmap's cells are filled (ADR-033). `scalar` is a
-    /// continuous measurement mapped through `colormap` — the only path
+    /// continuous measurement mapped through `colormap` - the only path
     /// that existed before this variant, unchanged. `rgb` is a color
-    /// the plugin already computed per cell (row-major, 3 bytes — r, g,
-    /// b — per cell, length must equal `width * height * 3`): for
+    /// the plugin already computed per cell (row-major, 3 bytes - r, g,
+    /// b - per cell, length must equal `width * height * 3`): for
     /// values that already *are* a color (e.g. Lab→sRGB-converted
     /// swatches) or a small set of discrete states a continuous
     /// gradient can't honestly represent. `value-min`/`value-max`/
-    /// `colormap` don't apply here, so this arm carries none of them —
+    /// `colormap` don't apply here, so this arm carries none of them -
     /// not a set of fields a plugin would have to fill with meaningless
     /// values, per the same "no second layer of optionality" instinct
     /// `band`'s empty-list convention already established.
@@ -281,7 +281,7 @@ interface view {
 
     // --- Composition (ADR-015): shape overlay on top of a heatmap ---
 
-    /// Core stays format-agnostic here — a plugin always hands back
+    /// Core stays format-agnostic here - a plugin always hands back
     /// already-normalized shapes (however it parsed them: SVG, CSV/XLSX,
     /// or a plugin-authored Gerber parser Core never needs to know
     /// about), never a file format for Core itself to parse.
@@ -302,7 +302,7 @@ interface view {
 }
 
 /// Implemented by view-provider plugins (ADR-009/ADR-014). A plugin owns
-/// its view-state and command vocabulary entirely — Core passes a raw
+/// its view-state and command vocabulary entirely - Core passes a raw
 /// command string through and never interprets it, same freedom-over-
 /// meaning-not-over-the-sandbox-boundary principle `doctor-rule` already
 /// establishes. See docs/modules/Idermviz.md's "Interaction / command
@@ -311,7 +311,7 @@ interface view-provider {
     use types.{project-info};
     use view.{view-primitive};
 
-    /// Opaque, plugin-owned state serialized as bytes — Core never
+    /// Opaque, plugin-owned state serialized as bytes - Core never
     /// interprets this, only stores and passes it back.
     type view-state = list<u8>;
 

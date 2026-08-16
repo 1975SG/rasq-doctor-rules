@@ -12,10 +12,9 @@ impl Guest for Component {
         "example-gitignore-present".to_string()
     }
 
-    /// Real round trip through `host::read_file`, not just a stub — proves
-    /// a rule cloned out of this repo and rebuilt on its own actually
-    /// crosses the WASM sandbox boundary correctly, before anyone edits it
-    /// into a real check.
+    /// full host round trip, not a stub
+    /// read `.gitignore` through `host::read_file` to prove a standalone
+    /// rule crosses the WASM sandbox boundary
     fn check(project: ProjectInfo) -> Vec<Finding> {
         let gitignore_path = format!("{}/.gitignore", project.root_path.trim_end_matches('/'));
         match host::read_file(&gitignore_path) {
