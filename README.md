@@ -1,16 +1,20 @@
 # iderm-doctor-rules
 
-Community-proposed `doctor-rule` plugins for [iderm](https://github.com/1975SG/iderm) —
-a WASM component per rule, built against iderm's real `doctor-rule` WIT
-interface (`iderm:plugin`). Core ships a small default ruleset built in;
-this repo is where checks beyond that live, versioned and reviewable on
-their own, per `docs/modules/Doctor.md`'s own "public, versioned doctor
-rules repo" line in the iderm project.
+I keep the doctor-rule plugins for [iderm](https://github.com/SGozel75/iderm)
+here — a WASM component per rule, built against iderm's real
+`doctor-rule` WIT interface (`iderm:plugin`). Core ships a small
+default ruleset built in; this repo is where I put checks beyond
+that, versioned and reviewable on their own.
 
-**Status: private, pre-OSS staging.** This repo exists ahead of iderm's
-own public release so the scaffold, the ABI-pinning convention, and the
-contribution shape below are real and tested before either goes public
-together.
+View plugins, repair recipes, and niche language manifests live in
+the sibling repo, `iderm-plugins`, instead — I keep this one separate
+since it existed first and I saw no reason to fold real, working
+history into a rename.
+
+**Status: private, pre-OSS staging.** This repo exists ahead of
+iderm's own public release, so I can get the scaffold, the ABI-pinning
+convention, and the contribution shape right while nobody but me is
+depending on any of it yet.
 
 ## Layout
 
@@ -22,17 +26,18 @@ rules/
     wit/deps/iderm-plugin/iderm-plugin.wit
 ```
 
-Each rule is its own crate under `rules/`, not a workspace member sharing
-one `Cargo.toml` — a rule should build and version independently of every
-other rule in this repo, the same way iderm's own `plugins/example-*`
-directories do.
+Each rule is its own crate under `rules/`, not a workspace member
+sharing one `Cargo.toml` — I want a rule to build and version
+independently of every other rule here, the same way iderm's own
+example plugins do.
 
 ## ABI versioning
 
 Every rule crate vendors its own copy of `wit/deps/iderm-plugin/
 iderm-plugin.wit`, pinned to a specific `package iderm:plugin@X.Y.Z`
-line at the top of that file — the same MAJOR.MINOR.PATCH compatibility
-policy iderm's own ADR-013 established for the plugin ABI generally:
+line at the top of that file. I follow the same MAJOR.MINOR.PATCH
+compatibility policy iderm itself commits to for the plugin ABI:
+
 - **MAJOR** — breaking change to `types`/`host`/`doctor-rule`. A rule
   built against an older MAJOR will not load.
 - **MINOR** — additive only (a new optional field, a new interface). A
@@ -41,8 +46,8 @@ policy iderm's own ADR-013 established for the plugin ABI generally:
 
 A rule's own `Cargo.toml` doesn't declare a compatible range — the
 vendored `.wit` file's version *is* the declaration. Bumping to a new
-iderm ABI means re-copying the `.wit` file from the iderm repo it's
-being proposed against and rebuilding.
+iderm ABI means re-copying the `.wit` file from the iderm repo I'm
+proposing against and rebuilding.
 
 ## Adding a rule
 
