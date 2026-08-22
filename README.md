@@ -1,6 +1,6 @@
 # iderm-doctor-rules
 
-I keep the doctor-rule plugins for [iderm](https://github.com/SGozel75/iderm)
+I keep the doctor-rule plugins for [iderm](https://github.com/1975SG/iderm)
 here — a WASM component per rule, built against iderm's real
 `doctor-rule` WIT interface (`iderm:plugin`). Core ships a small
 default ruleset built in; this repo is where I put checks beyond
