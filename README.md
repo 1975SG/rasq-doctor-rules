@@ -1,4 +1,11 @@
-# iderm-doctor-rules
+# rasq-doctor-rules
+
+**This project is now called rasq.** `iderm` was its working prototype
+name — Core's own repo hasn't been renamed yet (it's still private, at
+[`github.com/1975SG/iderm`](https://github.com/1975SG/iderm)), and the
+real WIT package/ABI identifiers below (`iderm:plugin`,
+`iderm-plugin.wit`) are unchanged code-level facts, not a naming
+inconsistency to fix here.
 
 I keep the doctor-rule plugins for [iderm](https://github.com/1975SG/iderm)
 here — a WASM component per rule, built against iderm's real
@@ -7,12 +14,12 @@ default ruleset built in; this repo is where I put checks beyond
 that, versioned and reviewable on their own.
 
 View plugins, repair recipes, and niche language manifests live in
-the sibling repo, `iderm-plugins`, instead — I keep this one separate
+the sibling repo, `rasq-plugins`, instead — I keep this one separate
 since it existed first and I saw no reason to fold real, working
 history into a rename.
 
 **Status: private, pre-OSS staging.** This repo exists ahead of
-iderm's own public release, so I can get the scaffold, the ABI-pinning
+Core's own public release, so I can get the scaffold, the ABI-pinning
 convention, and the contribution shape right while nobody but me is
 depending on any of it yet.
 
